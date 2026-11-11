@@ -1,0 +1,7 @@
+<resources>
+    <style name="Theme.Ebbinghaus" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@color/status_bar_dark</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">@color/status_bar_dark</item>
+    </style>
+</resources>

@@ -1,0 +1,11 @@
+﻿.gradle/
+.build/
+**/build/
+local.properties
+*.apk
+!Release/*.apk
+exports/frames/
+*.jks
+*.keystore
+.env
+.env.*

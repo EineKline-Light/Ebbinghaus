@@ -1,0 +1,1 @@
+const fs=require('fs');const p='app/src/main/assets/app.js';let s=fs.readFileSync(p,'utf8').replace('currentTab=i;originalTab(i);','currentTab=i;originalTab(i);document.getElementById("screen-scrollable-body").scrollTop=0;');fs.writeFileSync(p,s);

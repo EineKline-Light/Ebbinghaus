@@ -1,0 +1,8 @@
+const assert=require('assert'),fs=require('fs'),vm=require('vm'),{align,blend}=require('../app/src/main/assets/curve-morph.js');
+const a='M35 12 L85 70 L85 12 L140 50 L305 85',b='M35 12 L85 70 L85 12 L140 50 L140 12 L305 40';
+const pair=align(a,b,false);for(let t of [0,.1,.5,.9,1]){const n=blend(pair.a,pair.b,t,false).match(/-?\d*\.?\d+/g).map(Number);n.forEach((v,i)=>{if(i%2===0)assert.equal(v,pair.a[i/2][0]);else assert(v>=12&&v<=85);});}const before=pair.a.map((p,i)=>p[0]<140?pair.b[i][1]===p[1]:true);assert(before.every(Boolean));
+const js=fs.readFileSync('app/src/main/assets/app.js','utf8'),handlers={},box={style:{},dataset:{},addEventListener:(n,f)=>{assert(!handlers[n]);handlers[n]=f;},setPointerCapture(){}};
+let count=0,now=100;const s={document:{getElementById:()=>box},performance:{now:()=>now},handlePhotoFrameClick(){},renderPhotoFrame(){count++;},persist(){},userPhotos:[1,2,3],activePhotoIdx:0};
+vm.createContext(s);vm.runInContext(js.slice(js.indexOf('// One pointer gesture'),js.indexOf('const renderPhotoBeforeRecovery')),s);s.initPhotoSwipeSupport();s.initPhotoSwipeSupport();
+function ev(x,y){return {touches:[{clientX:x,clientY:y}],changedTouches:[{clientX:x,clientY:y}],target:{closest:()=>false},cancelable:true,preventDefault(){}};}
+handlers.touchstart(ev(200,100));handlers.touchmove(ev(100,105));handlers.touchend(ev(100,105));assert.equal(s.activePhotoIdx,1);handlers.touchstart(ev(100,100));handlers.touchend(ev(200,105));assert.equal(s.activePhotoIdx,0);assert.equal(count,2);console.log('PASS: scheme A fixed X, unchanged history, bounded interpolation; touch swipe both directions and idempotent rebind.');

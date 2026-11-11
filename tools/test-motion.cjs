@@ -1,0 +1,14 @@
+const vm=require('vm'),fs=require('fs'),assert=require('assert');
+const morph=require('../app/src/main/assets/curve-morph.js');
+const a=morph.sample('M35 98 L100 90 L305 80'),b=morph.sample('M35 12 L80 60 L80 12 L305 40');
+assert.equal(a.length,b.length);assert(morph.blend(a,b,.5,false).includes('M35.00 55.00'));assert(!/NaN/.test(morph.blend(a,b,.5,true)));
+const js=fs.readFileSync('app/src/main/assets/app.js','utf8');const handlers={};let renders=0,clicks=0,time=100;
+const box={style:{},addEventListener:(n,f)=>handlers[n]=f,setPointerCapture(){}};
+const s={handlePhotoFrameClick:()=>clicks++,document:{getElementById:()=>box},performance:{now:()=>time},userPhotos:[1,2,3],activePhotoIdx:0,renderPhotoFrame:()=>renders++,persist(){}};
+vm.createContext(s);vm.runInContext(js.slice(js.indexOf('// One pointer gesture')),s);s.initPhotoSwipeSupport();
+const event=(x,y)=>({pointerId:1,button:0,clientX:x,clientY:y,target:{closest:()=>false}});
+handlers.pointerdown(event(200,100));handlers.pointerup(event(100,105));assert.equal(s.activePhotoIdx,1);s.handlePhotoFrameClick(event(100,105));assert.equal(clicks,0);
+time=600;handlers.pointerdown(event(100,100));handlers.pointerup(event(200,105));assert.equal(s.activePhotoIdx,0);
+time=1200;handlers.pointerdown(event(100,100));handlers.pointerup(event(105,200));assert.equal(s.activePhotoIdx,0);s.handlePhotoFrameClick(event(105,200));assert.equal(clicks,1);
+handlers.pointerdown(event(100,100));handlers.pointercancel();handlers.pointerup(event(200,100));assert.equal(renders,2);
+console.log('PASS: path interpolation across different shapes; left/right swipe once, synthetic click blocked, vertical gesture and cancellation safe.');

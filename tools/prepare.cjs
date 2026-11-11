@@ -1,0 +1,13 @@
+const fs = require('fs');
+const p='app/src/main/assets/index.html'; let h=fs.readFileSync(p,'utf8');
+h=h.replace(/<script src="https:[^"]+tailwindcss[^\"]*"><\/script>/,'<link rel="stylesheet" href="app.css">');
+h=h.replace('maximum-scale=1.0, user-scalable=no, ','');
+h=h.replace('<div class="pt-7 w-full"></div>','<div style="height:8px;flex-shrink:0"></div>');
+h=h.replace('let totalSecondsStudy = 4 * 3600 + 15 * 60;', 'let totalSecondsStudy = 0;');
+h=h.replace('const intervals = [1, 2, 4, 7, 14];','const intervals = reviewIntervals;');
+h=h.replace("alert('天数自定义编辑功能已就绪')",'editIntervals()').replace("alert('数据导出成功')",'exportBackup()').replace("alert('请选择恢复文件')",'importBackup()');
+h=h.replace(/\[0, 1, 2\]\.forEach\(i =>/g,'taskData.forEach((_, i) =>');
+h=h.replace('const val = input.value.trim();','const val = input.value.trim();');
+h=h.replace('<script>', '<script>');
+h=h.replace('</body>','<script src="app.js"></script>\n</body>');
+fs.writeFileSync(p,h);
